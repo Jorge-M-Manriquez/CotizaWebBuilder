@@ -1,34 +1,60 @@
+import os
+import asyncio
 import flet as ft
+from google.cloud import firestore
 
-# Definimos los precios base para cada opción con la nueva opción de blogs añadida
-precios = {
-    "adaptacion_plantilla": {"valor_ofrecido": 30000, "nacional": 300000, "internacional": 400},
-    "personalizacion_plantilla": {"valor_ofrecido": 60000, "nacional": 500000, "internacional": 650},
-    "creacion_personalizada": {"valor_ofrecido": 90000, "nacional": 1500000, "internacional": 2000},
-    "seo_basico": {"valor_ofrecido": 30000, "nacional": 100000, "internacional": 150},
-    "seo_avanzado": {"valor_ofrecido": 75000, "nacional": 200000, "internacional": 300},
-    "mantenimiento_basico": {"valor_ofrecido": 25000, "nacional": 50000, "internacional": 70},
-    "mantenimiento_estandar": {"valor_ofrecido": 50000, "nacional": 100000, "internacional": 140},
-    "mantenimiento_avanzado": {"valor_ofrecido": 75000, "nacional": 150000, "internacional": 210},
-    "limite_25_productos": {"valor_ofrecido": 0, "nacional": 0, "internacional": 0},
-    "limite_50_productos": {"valor_ofrecido": 25000, "nacional": 50000, "internacional": 100},
-    "limite_100_productos": {"valor_ofrecido": 50000, "nacional": 100000, "internacional": 140},
-    "limite_150_productos": {"valor_ofrecido": 100000, "nacional": 200000, "internacional": 280},
-    "limite_500_productos": {"valor_ofrecido": 200000, "nacional": 400000, "internacional": 560},
-    "ilimitado_productos": {"valor_ofrecido": 400000, "nacional": 800000, "internacional": 1000},
-    "dominio_previo": {"valor_ofrecido": 0, "nacional": 0, "internacional": 0},
-    "sin_dominio_previo": {"valor_ofrecido": 20000, "nacional": 40000, "internacional": 60},
-    "hosting_previo": {"valor_ofrecido": 0, "nacional": 0, "internacional": 0},
-    "sin_hosting_previo": {"valor_ofrecido": 40000, "nacional": 60000, "internacional": 90},
-    "1_blog": {"valor_ofrecido": 15000, "nacional": 60000, "internacional": 90},
-    "2_blog": {"valor_ofrecido": 30000, "nacional": 100000, "internacional": 140},
-    "3_blog": {"valor_ofrecido": 45000, "nacional": 140000, "internacional": 190},
-    "4_blog": {"valor_ofrecido": 60000, "nacional": 180000, "internacional": 240}
-}
+import os
+from google.cloud import firestore
+
+# Establecer la variable de entorno para las credenciales
+print("Estableciendo la variable de entorno para las credenciales...")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/jorge/OneDrive/Documents/Proyectos_Personales/AplicacionesFlet/CotizaWebBuilder/precios-cotizawebbuilder-366c9592643a.json"
+
+# Inicializar el cliente Firestore
+print("Inicializando el cliente Firestore...")
+db = firestore.Client()
+
+# Función para obtener los precios desde Firestore
+def fetch_prices_from_firestore():
+    print("Intentando obtener el documento de Firestore...")
+
+    # Referencia al documento en Firestore
+    doc_ref = db.collection("precios").document("lista_precios")
+    
+    try:
+        # Obtener el documento
+        doc = doc_ref.get()
+        if doc.exists:
+            print("Documento encontrado en Firestore.")
+            return doc.to_dict()  # Devolver los datos como diccionario
+        else:
+            print("No se encontró el documento.")
+            return {}
+    except Exception as e:
+        # Capturar cualquier excepción que ocurra durante la obtención de datos
+        print(f"Error al obtener el documento: {e}")
+        return {}
+
+# Obtener los precios al inicio del script
+print("Obteniendo los precios desde Firestore al inicio del script...")
+precios = fetch_prices_from_firestore()
+
+# Imprimir los precios obtenidos para verificar los datos
+print("Precios obtenidos:", precios)
+
 
 def main(page: ft.Page):
     page.title = "CotizaWebBuilder"
-    # Crear un título centrado
+    page.theme_mode = ft.ThemeMode.DARK
+    page.padding = 20
+
+    # Mostrar un indicador de carga
+    loading = ft.ProgressRing()
+    page.add(loading)
+    
+    # Remover el indicador de carga
+    page.remove(loading)
+
     title = ft.Text(
         "Seleccion de Servicios",
         size=30,
@@ -36,22 +62,27 @@ def main(page: ft.Page):
         text_align=ft.TextAlign.CENTER
     )
     
-    # Envolver el título en un contenedor para darle padding y centrarlo
     title_container = ft.Container(
         content=title,
         alignment=ft.alignment.center,
         padding=ft.padding.only(top=20, bottom=20)
     )
 
-    # Añadir el título centrado a la página
     page.add(title_container)
-
-    page.theme_mode = ft.ThemeMode.DARK
-    page.padding = 20
 
     def format_option_with_price(option_key, price_key="valor_ofrecido"):
         price = precios[option_key][price_key]
         return f"{option_key.replace('_', ' ').title()} - ${price:,}"
+    
+
+    def format_option_with_price(option_key, price_key="valor_ofrecido"):
+        if option_key in precios:
+            price = precios[option_key].get(price_key, 0)  # Usa get para evitar KeyError
+            return f"{option_key.replace('_', ' ').title()} - ${price:,}"
+        else:
+            print(f"Clave {option_key} no encontrada en los precios.")
+            return f"{option_key.replace('_', ' ').title()} - Precio no disponible"
+
     
     # Descripciones
     descripcion_g1 = ft.Text("\n "
@@ -104,7 +135,6 @@ def main(page: ft.Page):
     "11. Hosting: Incluye el servicio de hosting para la web.\n"
     "    - Alojamiento web con características según el plan contratado.\n")
 
-
     creacion_dropdown = ft.Dropdown(
         label="Creación",
         expand=True,
@@ -112,7 +142,7 @@ def main(page: ft.Page):
             ft.dropdown.Option(key=key, text=format_option_with_price(key))
             for key in ["adaptacion_plantilla", "personalizacion_plantilla", "creacion_personalizada"]
         ],
-    ) 
+    )
 
     seo_dropdown = ft.Dropdown(
         label="SEO",
@@ -213,7 +243,6 @@ def main(page: ft.Page):
             "Hosting": hosting
         }
 
-        # Añadimos blogs a las selecciones si SEO Avanzado está seleccionado
         if seo == "seo_avanzado":
             selecciones["Blogs"] = blogs
 
@@ -256,30 +285,13 @@ def main(page: ft.Page):
 
     seo_dropdown.on_change = toggle_blogs_visibility
 
-    # calcular_button = ft.ElevatedButton(text="Calcular", expand=True, on_click=mostrar_resultado)
     calcular_button = ft.Container(
         ft.ElevatedButton(text="Calcular", on_click=mostrar_resultado),
-        width=page.width * 0.8,  # 50% del ancho de la página
+        width=page.width * 0.8,
         height=50,  
     )
     button_centered = ft.Row([calcular_button], alignment=ft.MainAxisAlignment.CENTER)
 
-    # page.add(
-    #     ft.Text("Calculadora de Precios", size=24, weight=ft.FontWeight.BOLD),
-    #     ft.Column([
-    #         creacion_dropdown,
-    #         seo_dropdown,
-    #         blogs_dropdown,
-    #         mantenimiento_dropdown,
-    #         productos_dropdown,
-    #         dominio_dropdown,
-    #         hosting_dropdown,
-    #         calcular_button,
-    #         resumen_texto
-    #     ], spacing=20)
-    # )
-
-    # Añadimos todos los elementos a una columna con desplazamiento
     scrollable_content = ft.Column(
         controls=[
             descripcion_g1,
@@ -299,16 +311,14 @@ def main(page: ft.Page):
             resumen_texto
         ],
         spacing=20,
-        scroll=ft.ScrollMode.ALWAYS  # Cambiado a ALWAYS
+        scroll=ft.ScrollMode.ALWAYS
     )
 
-    # Agregamos la columna con scroll a la página
     page.add(
-        # ft.Text("Seleccion de Servicios", size=24, weight=ft.FontWeight.BOLD),
         ft.Container(
             content=scrollable_content,
             expand=True
         )
     )
 
-ft.app(target=main)
+asyncio.run(ft.app(target=main))
