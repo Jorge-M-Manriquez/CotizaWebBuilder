@@ -54,6 +54,15 @@ jobs:
         flutter-version: ${{ env.FLUTTER_VERSION }}
       # Configura la versión de Flutter especificada
 
+    - name: Set up Google Cloud credentials
+      run: |
+        echo "${{ secrets.GOOGLE_CREDENTIALS }}" | Set-Content -Path "$HOME\gcloud.json"
+      # Carga las credenciales de Google Cloud desde los secretos del repositorio
+  
+    - name: Set environment variable for Google credentials
+      run: echo "GOOGLE_CREDENTIALS=$HOME\gcloud.json" >> $GITHUB_ENV
+      # Establece la variable de entorno para las credenciales de Google Cloud
+
     - name: Flet Build Windows
       run: |
         flutter config --no-analytics
@@ -68,17 +77,6 @@ jobs:
         if-no-files-found: warn
         overwrite: false
       # Sube el artefacto de construcción de Windows
-
-    # NUEVA SECCIÓN: Carga las credenciales desde los secretos
-    - name: Set up Google Cloud credentials
-      run: |
-        New-Item -Path $HOME -Name gcloud.json -ItemType File -Value "${{ secrets.GOOGLE_CREDENTIALS }}"
-      # Carga las credenciales de Google Cloud desde los secretos del repositorio
-  
-    - name: Set environment variable for Google credentials
-      run: |
-        $env:GOOGLE_CREDENTIALS = "$HOME/gcloud.json"
-      # Establece la variable de entorno para las credenciales de Google Cloud
 # -------------------------------------------------------
   build-apk:
     runs-on: ubuntu-latest
