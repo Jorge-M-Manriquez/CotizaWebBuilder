@@ -6,9 +6,13 @@ from google.cloud import firestore
 import os
 from google.cloud import firestore
 
+# Asegúrate de que la variable de entorno esté configurada
+if "GOOGLE_CREDENTIALS" not in os.environ:
+    raise EnvironmentError("GOOGLE_CREDENTIALS no está configurada")
+
 # Establecer la variable de entorno para las credenciales
-print("Estableciendo la variable de entorno para las credenciales...")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/jorge/OneDrive/Documents/Proyectos_Personales/AplicacionesFlet/CotizaWebBuilder/precios-cotizawebbuilder-366c9592643a.json"
+# print("Estableciendo la variable de entorno para las credenciales...")
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "C:/Users/jorge/OneDrive/Documents/Proyectos_Personales/AplicacionesFlet/CotizaWebBuilder/precios-cotizawebbuilder-366c9592643a.json"
 
 # Inicializar el cliente Firestore
 print("Inicializando el cliente Firestore...")
