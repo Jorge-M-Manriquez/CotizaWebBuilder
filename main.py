@@ -3,9 +3,6 @@ import asyncio
 import flet as ft
 from google.cloud import firestore
 
-import os
-from google.cloud import firestore
-
 # Asegúrate de que la variable de entorno esté configurada
 if "GOOGLE_CREDENTIALS" not in os.environ:
     raise EnvironmentError("GOOGLE_CREDENTIALS no está configurada")
