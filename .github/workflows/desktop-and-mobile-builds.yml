@@ -4,13 +4,13 @@ on:
   # Ejecuta este flujo de trabajo al hacer push a cualquiera de las siguientes ramas
   push:
     branches:
-      # - master
-      # - main
+      - master
+      - main
   # Ejecuta este flujo de trabajo en eventos de solicitud de extracción que apunten a alguna de las siguientes ramas
   pull_request:
     branches:
-      # - master
-      # - main
+      - master
+      - main
 
   # Permite ejecutar este flujo de trabajo manualmente desde la pestaña de Acciones del repositorio
   workflow_dispatch:
@@ -66,7 +66,7 @@ jobs:
       # Carga las credenciales de Google Cloud desde los secretos del repositorio
 
     - name: Set environment variable for Google credentials
-      run: export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json
+      run: export GOOGLE_CREDENTIALS=$HOME/gcloud.json
       # Establece la variable de entorno para las credenciales de Google Cloud
 
       #------------------------------------------
