@@ -174,95 +174,95 @@ jobs:
 
   #---------------------
 
-  build-aab:
-    runs-on: macos-latest
+  # build-aab:
+  #   runs-on: macos-latest
 
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #     # Obtiene el código fuente del repositorio
+
+  #   - name: Setup Python ${{ env.PYTHON_VERSION }}
+  #     uses: actions/setup-python@v5
+  #     with:
+  #       python-version: ${{ env.PYTHON_VERSION }}
+  #     # Configura la versión de Python especificada
+
+  #   - name: Install Python Dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r requirements.txt
+  #     # Actualiza pip y instala las dependencias de Python especificadas en requirements.txt
+
+  #   - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
+  #     uses: subosito/flutter-action@v2
+  #     with:
+  #       flutter-version: ${{ env.FLUTTER_VERSION }}
+  #     # Configura la versión de Flutter especificada
+
+  #   - name: Flet Build AAB
+  #     run: |
+  #       flutter config --no-analytics
+  #       flet build aab --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
+  #     # Construye el paquete Android (.aab) usando Flet
+
+  #   - name: Upload AAB Artifact
+  #     uses: actions/upload-artifact@v4.3.4
+  #     with:
+  #       name: aab-build-artifact
+  #       path: build/aab
+  #       if-no-files-found: warn
+  #       overwrite: false
+  #     # Sube el artefacto de construcción de Android (.aab)
+#---------------------
+  build-apk:
+    runs-on: ubuntu-latest
+  
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       # Obtiene el código fuente del repositorio
-
+  
     - name: Setup Python ${{ env.PYTHON_VERSION }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
       # Configura la versión de Python especificada
-
+  
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
       # Actualiza pip y instala las dependencias de Python especificadas en requirements.txt
-
+  
     - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
       uses: subosito/flutter-action@v2
       with:
         flutter-version: ${{ env.FLUTTER_VERSION }}
       # Configura la versión de Flutter especificada
-
-    - name: Flet Build AAB
+  
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4.2.1
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+      # Configura el entorno de desarrollo Java para construir APKs
+  
+    - name: Flet Build APK
       run: |
         flutter config --no-analytics
-        flet build aab --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
-      # Construye el paquete Android (.aab) usando Flet
-
-    - name: Upload AAB Artifact
+        flet build apk --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
+      # Construye el paquete APK usando Flet
+  
+    - name: Upload APK Artifact
       uses: actions/upload-artifact@v4.3.4
       with:
-        name: aab-build-artifact
-        path: build/aab
+        name: apk-build-artifact
+        path: build/apk
         if-no-files-found: warn
         overwrite: false
-      # Sube el artefacto de construcción de Android (.aab)
-#---------------------
-build-apk:
-  runs-on: ubuntu-latest
-
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v4
-    # Obtiene el código fuente del repositorio
-
-  - name: Setup Python ${{ env.PYTHON_VERSION }}
-    uses: actions/setup-python@v5
-    with:
-      python-version: ${{ env.PYTHON_VERSION }}
-    # Configura la versión de Python especificada
-
-  - name: Install Python Dependencies
-    run: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
-    # Actualiza pip y instala las dependencias de Python especificadas en requirements.txt
-
-  - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
-    uses: subosito/flutter-action@v2
-    with:
-      flutter-version: ${{ env.FLUTTER_VERSION }}
-    # Configura la versión de Flutter especificada
-
-  - name: Setup Java JDK
-    uses: actions/setup-java@v4.2.1
-    with:
-      distribution: 'temurin'
-      java-version: '21'
-    # Configura el entorno de desarrollo Java para construir APKs
-
-  - name: Flet Build APK
-    run: |
-      flutter config --no-analytics
-      flet build apk --verbose --build-number=$BUILD_NUMBER --build-version=$BUILD_VERSION
-    # Construye el paquete APK usando Flet
-
-  - name: Upload APK Artifact
-    uses: actions/upload-artifact@v4.3.4
-    with:
-      name: apk-build-artifact
-      path: build/apk
-      if-no-files-found: warn
-      overwrite: false
-    # Sube el artefacto de construcción de APK
-
+      # Sube el artefacto de construcción de APK
+  
 #---------------------
 # build-ipa:
 #   runs-on: macos-latest
