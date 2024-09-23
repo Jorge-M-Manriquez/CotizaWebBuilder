@@ -26,48 +26,48 @@ env:
   FLUTTER_VERSION: 3.24.3
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  # build-linux:
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      # Obtiene el código fuente del repositorio
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #     # Obtiene el código fuente del repositorio
 
-    - name: Setup Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-      # Configura la versión de Python especificada
+  #   - name: Setup Python ${{ env.PYTHON_VERSION }}
+  #     uses: actions/setup-python@v5
+  #     with:
+  #       python-version: ${{ env.PYTHON_VERSION }}
+  #     # Configura la versión de Python especificada
 
-    - name: Install Python Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-      # Actualiza pip y instala las dependencias de Python especificadas en requirements.txt
+  #   - name: Install Python Dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r requirements.txt
+  #     # Actualiza pip y instala las dependencias de Python especificadas en requirements.txt
 
-    - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: ${{ env.FLUTTER_VERSION }}
-      # Configura la versión de Flutter especificada
+  #   - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
+  #     uses: subosito/flutter-action@v2
+  #     with:
+  #       flutter-version: ${{ env.FLUTTER_VERSION }}
+  #     # Configura la versión de Flutter especificada
 
-    - name: Patch for linux build
-      run: |
-        flutter doctor
-        sudo apt-get update -y
-        sudo apt-get install -y ninja-build libgtk-3-dev
-        flutter doctor
-      # Aplica parches necesarios para la construcción en Linux
+  #   - name: Patch for linux build
+  #     run: |
+  #       flutter doctor
+  #       sudo apt-get update -y
+  #       sudo apt-get install -y ninja-build libgtk-3-dev
+  #       flutter doctor
+  #     # Aplica parches necesarios para la construcción en Linux
 
-    # NUEVA SECCIÓN: Carga las credenciales desde los secretos
-    - name: Set up Google Cloud credentials
-      run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > $HOME/gcloud.json
-      # Carga las credenciales de Google Cloud desde los secretos del repositorio
+  #   # NUEVA SECCIÓN: Carga las credenciales desde los secretos
+  #   - name: Set up Google Cloud credentials
+  #     run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > $HOME/gcloud.json
+  #     # Carga las credenciales de Google Cloud desde los secretos del repositorio
 
-    - name: Set environment variable for Google credentials
-      run: export GOOGLE_CREDENTIALS=$HOME/gcloud.json
-      # Establece la variable de entorno para las credenciales de Google Cloud
+  #   - name: Set environment variable for Google credentials
+  #     run: export GOOGLE_CREDENTIALS=$HOME/gcloud.json
+  #     # Establece la variable de entorno para las credenciales de Google Cloud
 
       #------------------------------------------
 
@@ -172,6 +172,15 @@ jobs:
         overwrite: false
       # Sube el artefacto de construcción de Windows
 
+    # NUEVA SECCIÓN: Carga las credenciales desde los secretos
+    - name: Set up Google Cloud credentials
+      run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > $HOME/gcloud.json
+      # Carga las credenciales de Google Cloud desde los secretos del repositorio
+
+    - name: Set environment variable for Google credentials
+      run: export GOOGLE_CREDENTIALS=$HOME/gcloud.json
+      # Establece la variable de entorno para las credenciales de Google Cloud
+
   #---------------------
 
   # build-aab:
@@ -262,6 +271,15 @@ jobs:
         if-no-files-found: warn
         overwrite: false
       # Sube el artefacto de construcción de APK
+
+    # NUEVA SECCIÓN: Carga las credenciales desde los secretos
+    - name: Set up Google Cloud credentials
+      run: echo "${{ secrets.GOOGLE_CREDENTIALS }}" > $HOME/gcloud.json
+      # Carga las credenciales de Google Cloud desde los secretos del repositorio
+
+    - name: Set environment variable for Google credentials
+      run: export GOOGLE_CREDENTIALS=$HOME/gcloud.json
+      # Establece la variable de entorno para las credenciales de Google Cloud
   
 #---------------------
 # build-ipa:
